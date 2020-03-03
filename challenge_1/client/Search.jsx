@@ -16,13 +16,15 @@ class Search extends React.Component {
     e.preventDefault();
 
     // handle XSS
+    const input = DOMPurify.sanitize(this.state.input.trim());
+    // console.log(DOMPurify.removed);
 
-    fetch(`/events?_start=0&_limit=10&q=${this.state.input.trim()}`)
+    fetch(`/events?_start=0&_limit=10&q=${input}`)
       .then((results) => {
         this.props.getSearchResultsCount(results.headers.get('X-Total-Count'));
         return results.json();
       })
-      .then((json) => this.props.setSearchResults(json, this.state.input.trim()))
+      .then((json) => this.props.setSearchResults(json, input))
       .catch((err) => console.log('error at Search.jsx, handleSubmit', err));
   }
 

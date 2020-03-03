@@ -1,0 +1,5 @@
+{
+  "/bundle.js": "../public/bundle.js",
+  "/purify.min.js": "../public/purify.min.js",
+  "/purify.min.js.map": "../public/purify.min.js.map"
+}
