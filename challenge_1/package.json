@@ -1,0 +1,33 @@
+{
+  "name": "challenge_1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "json-server --watch data/db.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-react": "^7.8.3",
+    "@emotion/babel-preset-css-prop": "^10.0.27",
+    "@emotion/core": "^10.0.28",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-emotion": "^10.0.29",
+    "json-server": "^0.16.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-paginate": "^6.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-config-hackreactor": "github:reactorcore/eslint-config-hackreactor",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
