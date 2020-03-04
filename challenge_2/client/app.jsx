@@ -1,6 +1,7 @@
 import React from 'react';
 import Calendar from 'react-calendar';
 import './CSS/Calendar.css';
+import './CSS/App.css';
 
 
 class App extends React.Component {
@@ -47,8 +48,8 @@ class App extends React.Component {
               labels: this.state.labels,
               datasets: [{
                   label: 'Closing price (USD)',
-                  backgroundColor: 'rgb(255, 99, 132)',
-                  borderColor: 'rgb(128,128,128)',
+                  backgroundColor: '#006edc',
+                  borderColor: '#000',
                   data: this.state.data
               }]
           },
@@ -60,7 +61,7 @@ class App extends React.Component {
                     return '$' + value;
                   }
                 }
-              }]
+              }],
             }
           }
       });
@@ -105,23 +106,36 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div id='App'>
         <h1>Bitcoin closing prices</h1>
-        <canvas id="chart">Loading...</canvas>
 
-        <div>
-          <Calendar
-            onChange={this.updateStartDate}
-            value={this.state.startDate}
-          />
+        <div id='chartContainer'>
+          <canvas id="chart">Loading...</canvas>
         </div>
 
-        <div>
-          <Calendar
-            onChange={this.updateEndDate}
-            value={this.state.endDate}
-          />
+        <div id='calendars'>
+          <div id='startDateContainer'>
+            <p>Start date</p>
+            <div id='startDate'>
+              <Calendar
+                onChange={this.updateStartDate}
+                value={this.state.startDate}
+              />
+            </div>
+          </div>
+
+          <div id='endDateContainer'>
+            <p>End date</p>
+            <div id='endDate'>
+              <Calendar
+                onChange={this.updateEndDate}
+                value={this.state.endDate}
+              />
+            </div>
+          </div>
         </div>
+
+        <div id='coindesk'><h2>Powered by CoinDesk</h2></div>
       </div>
     );
   }

@@ -1,0 +1,65 @@
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-image: linear-gradient(to bottom, white, rgb(200,200,200));
+  min-height: 100vh;
+  margin: 0;
+}
+
+#App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 68px);
+}
+
+h1 {
+  text-align: center;
+  margin: 0;
+  padding: 0 0 20px;
+}
+
+#chartContainer {
+  width: 75vw;
+  height: auto;
+  margin: 0 auto;
+}
+
+#calendars {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#startDateContainer, #endDateContainer {
+  display: 'flex';
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#startDateContainer p, #endDateContainer p {
+  text-align: center;
+  font-weight: bold;
+}
+
+#startDate, #endDate {
+  margin: 10px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+
+#coindesk {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background-image: linear-gradient(to right,rgb(200,200,200), white, rgb(200,200,200));
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+h2 {
+  text-align: center;
+  font-style: italic;
+}
