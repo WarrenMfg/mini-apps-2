@@ -9,6 +9,7 @@ body {
 
 .App {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -30,12 +31,59 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   margin: 0 5px 0;
   border: 1px solid black;
   border-radius: 50px;
   background-color: white;
   cursor: pointer;
   font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.App-pin:hover {
+  background-color: rgb(200,200,200);
+}
+
+.App-score-card {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 0;
+}
+
+.App-frame {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "rolls"
+    "total";
+  width: 5vw;
+  height: 5vw;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.App-frame-rolls {
+  grid-area: rolls;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "roll1 roll2";
+}
+
+.App-frame-roll1 {
+  grid-area: roll1;
+  text-align: right;
+}
+
+.App-frame-roll2 {
+  grid-area: roll2;
+  text-align: right;
+}
+
+.App-frame-total {
+  grid-area: total;
+  font-size: 32px;
+  text-align: center;
 }

@@ -18,11 +18,34 @@ class App extends React.Component {
         9: 0,
         10: 0
       },
-      frame: 1,
+      currentFrame: 1,
       roll: 1,
-      score: {
-      },
-      bonus: 0 // applied to current frame - 1
+      frames: {
+        1: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0, // 0, 1, or 2
+          frameTotal: 0
+        },
+        2: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0, // 0, 1, or 2
+          frameTotal: 0
+        },
+        3: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0, // 0, 1, or 2
+          frameTotal: 0
+        }
+      }
     };
 
     this.handlePinClick = this.handlePinClick.bind(this);
@@ -35,7 +58,7 @@ class App extends React.Component {
 
     const target = e.target.closest('.App-pin').id;
 
-    if (typeof target === 'string') {
+    if (typeof target === 'string') { // is this if statement needed now that I have first if statement?
       const pin = parseInt(target, 10);
 
       if (this.state.pins[pin]) { // if 1, make 0
@@ -55,19 +78,79 @@ class App extends React.Component {
           return {pins: prevState.pins};
         });
       }
-
     }
   }
 
   handleRollScore(pins) {
-    const score = Object.entries(pins).reduce((acc, cur) => {return acc + cur[1]}, 0);
+    const { currentFrame, roll, frames } = this.state;
+    const rollScore = Object.entries(pins).reduce((acc, cur) => {return acc + cur[1]}, 0);
+
+    if (roll === 1) {
+      this.setState((prevState) => {
+        prevState.frames[currentFrame].rolls[roll] = rollScore;
+        prevState.frames[currentFrame].frameTotal = rollScore;
+        prevState.roll = 2;
+
+        if (rollScore === 10) {
+          prevState.frames[currentFrame].bonusRollCount = 2;
+        }
+
+        return { roll: prevState.roll, frames: prevState.frames };
+      });
+
+      if (currentFrame > 1) {
+        this.checkForOutstandingBonusRolls(rollScore);
+      }
+
+    } else if (roll === 2) {
+      prevState.frames[currentFrame].rolls[roll] = rollScore;
+      prevState.frames[currentFrame].frameTotal += rollScore;
+      prevState.currentFrame < 10 ? prevState.currentFrame++ : prevState.currentFrame = 10; // this will need to change
+      prevState.roll = 1;
+
+      if (prevState.frames[currentFrame].frameTotal === 10) {
+        prevState.frames[currentFrame].bonusRollCount = 1;
+      }
+
+      return {
+        currentFrame: prevState.currentFrame,
+        roll: prevState.roll,
+        frames: prevState.frames
+      };
+
+      if (currentFrame > 1) {
+        this.checkForOutstandingBonusRolls(rollScore);
+      }
+    }
+  }
+
+  checkForOutstandingBonusRolls(score) {
+    const { currentFrame, frames } = this.state;
+
+    if (currentFrame === 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+    } else if (currentFrame > 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+    }
+  }
+
+  addToFrameWithBonusRoll(frame) {
+    if (frames[frame].bonusRollCount) {
+      this.setState((prevState) => {
+        prevState.frames[frame].frameTotal += score;
+        prevState.frames[frame].bonusRollCount--;
+
+        return { frames: prevState.frames };
+      });
+    }
   }
 
   render() {
     return (
       <div className='App'>
 
-        {/* Indicate frame and roll */}
+        <div><h1>Frame: {this.state.currentFrame} Roll: {this.state.roll}</h1></div>
 
         <div className='App-pin-container' onClick={this.handlePinClick}>
           <div className='App-pin-row'>
@@ -93,7 +176,87 @@ class App extends React.Component {
           </div>
         </div>
 
-        {/* Add frames/score */}
+        <div className='App-score-card'>
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[1].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[1].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[1].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[2].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[2].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[2].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[3].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[3].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[3].frameTotal}</div>
+          </div>
+
+          {/* <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[4].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[4].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[4].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[5].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[5].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[5].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[6].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[6].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[6].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[7].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[7].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[7].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[8].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[8].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[8].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[9].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[9].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[9].frameTotal}</div>
+          </div>
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[10].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[10].rolls[this.state.roll]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[10].frameTotal}</div>
+          </div> */}
+        </div>
       </div>
     );
   }
