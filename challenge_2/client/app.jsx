@@ -24,7 +24,8 @@ class App extends React.Component {
     fetch('/api/last31Days')
       .then((response) => response.json())
       .then((response) => {
-        const bpi = Object.entries(response.bpi);
+        // const bpi = Object.entries(response.bpi);
+        const bpi = Object.entries(response);
         const labels = [];
         const data = [];
         bpi.forEach((tuple) => {
@@ -32,8 +33,8 @@ class App extends React.Component {
           data.push(tuple[1]);
         });
 
-        const startDate = new Date(labels[0].split('-')[0], +labels[0].split('-')[1] - 1, labels[0].split('-')[2]);
-        const endDate = new Date(labels[labels.length - 1].split('-')[0], +labels[labels.length - 1].split('-')[1] - 1, labels[labels.length - 1].split('-')[2]);
+        const startDate = new Date(labels[labels.length - 1].split('-')[0], +labels[labels.length - 1].split('-')[1] - 1, labels[labels.length - 1].split('-')[2]);
+        const endDate = new Date(labels[0].split('-')[0], +labels[0].split('-')[1] - 1, labels[0].split('-')[2]);
 
         this.setState({ labels, data, startDate, endDate });
       })
@@ -77,7 +78,7 @@ class App extends React.Component {
     fetch(`/api/range/start=${start}&end=${end}`)
       .then((response) => response.json())
       .then((response) => {
-        const bpi = Object.entries(response.bpi);
+        const bpi = Object.entries(response);
         const labels = [];
         const data = [];
         bpi.forEach((tuple) => {
@@ -85,6 +86,7 @@ class App extends React.Component {
           data.push(tuple[1]);
         });
 
+        // find start and end date order somehow
         const startDate = new Date(labels[0].split('-')[0], +labels[0].split('-')[1] - 1, labels[0].split('-')[2]);
         const endDate = new Date(labels[labels.length - 1].split('-')[0], +labels[labels.length - 1].split('-')[1] - 1, labels[labels.length - 1].split('-')[2]);
 
