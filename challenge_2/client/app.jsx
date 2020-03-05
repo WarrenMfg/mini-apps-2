@@ -11,7 +11,8 @@ class App extends React.Component {
       labels: [],
       data: [],
       startDate: null,
-      endDate: null
+      endDate: null,
+      // add cache here
     };
 
     this.updateStartDate = this.updateStartDate.bind(this);
@@ -20,7 +21,7 @@ class App extends React.Component {
 
   componentDidMount() {
     // last 31 days
-    fetch(`https://api.coindesk.com/v1/bpi/historical/close.json`)
+    fetch('/api/last31Days')
       .then((response) => response.json())
       .then((response) => {
         const bpi = Object.entries(response.bpi);
@@ -73,7 +74,7 @@ class App extends React.Component {
     const end = ed.toJSON().split('T')[0];
 
     // user-defined start and end dates
-    fetch(`https://api.coindesk.com/v1/bpi/historical/close.json?start=${start}&end=${end}`)
+    fetch(`/api/range/start=${start}&end=${end}`)
       .then((response) => response.json())
       .then((response) => {
         const bpi = Object.entries(response.bpi);
