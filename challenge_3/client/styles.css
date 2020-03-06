@@ -87,3 +87,8 @@ body {
   font-size: 32px;
   text-align: center;
 }
+
+.App-score {
+  font-weight: bold;
+  text-align: center;
+}

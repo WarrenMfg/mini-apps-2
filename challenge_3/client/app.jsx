@@ -6,6 +6,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      score: 0,
+      gameOver: false,
       pinClicked: 0,
       rollScoreCounted: 0,
       pins: 0,
@@ -106,19 +108,27 @@ class App extends React.Component {
     if (prevState.rollScoreCounted !== this.state.rollScoreCounted) {
       this.checkForOutstandingBonusRolls();
     }
+
+    // if currentFrame === 11?
   }
 
   handlePinClick(e) {
+    if (this.state.gameOver) { // prohibit further play
+      return;
+    }
     if (e.target.closest('.App-pin') === null) {
       return;
     }
 
     const pins = parseInt(e.target.closest('.App-pin').id, 10);
 
+    if (pins + this.state.pins > 10) { // handles max allowed pins to be selected
+      return;
+    }
+
     for (let i = pins; i >= 1; i--) {
       document.getElementById(i).style.cssText = 'background-color: black; color: white; transition: all 0.2s ease;';
     }
-
     setTimeout(() => {
       for (let i = pins; i >= 1; i--) {
         document.getElementById(i).removeAttribute('style');
@@ -176,11 +186,58 @@ class App extends React.Component {
   checkForOutstandingBonusRolls() {
     const { currentFrame, frames, roll, pins, pinClicked } = this.state;
 
+    // short circuit for last frame logic
+    if (currentFrame === 10 && pins === 10) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
+      return;
+
+    } else if (currentFrame === 10 && roll === 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+
+    } else if (currentFrame === 10 && roll === 1) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+      this.setState({ gameOver: true });
+      return;
+    }
+
+
+    if (currentFrame === 11 && pins === 10 && roll === 2) { // strike
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
+
+    } else if (currentFrame === 11 && pins === 10 && roll === 1) { // spare
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+      this.setState({ gameOver: true });
+
+    } else if (currentFrame === 11 && roll === 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+
+    } else if (currentFrame === 11 && roll === 1) {
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+      this.setState({ gameOver: true });
+    }
+
+
+    if (currentFrame === 12) { // only one roll allowed here
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+      this.setState({ gameOver: true });
+    }
+
+
     if (currentFrame === 1 && pins === 10) {
       this.setState((prevState) => ({ currentFrame: prevState.currentFrame + 1 }));
+      this.calculateTotalScore();
 
     } else if (currentFrame === 1 && pinClicked === 2) {
       this.setState((prevState) => ({ currentFrame: prevState.currentFrame + 1 }));
+      this.calculateTotalScore();
 
     } else if (currentFrame === 2 && pins === 10) {
       this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
@@ -231,13 +288,30 @@ class App extends React.Component {
         });
       }
     }
+
+    this.calculateTotalScore();
+  }
+
+  calculateTotalScore() {
+    const { frames } = this.state;
+    const keys = Object.keys(frames);
+    let score = 0;
+
+    keys.forEach((key) => {
+      score += frames[key].frameTotal;
+    });
+
+    this.setState({ score, pins: 0 });
   }
 
   render() {
     return (
       <div className='App'>
 
-        <div><h1>Frame: {this.state.currentFrame} Roll: {this.state.roll}</h1></div>
+        {this.state.gameOver ?
+          <h1>Final Score: {this.state.score}</h1> :
+          <h1>Frame: {this.state.currentFrame} Roll: {this.state.roll}</h1>
+        }
 
         <div className='App-pin-container' onClick={this.handlePinClick}>
           <div className='App-pin-row'>
@@ -343,7 +417,25 @@ class App extends React.Component {
             </div>
             <div className='App-frame-total'>{this.state.frames[10].frameTotal}</div>
           </div>
+
+        {this.state.currentFrame > 10 &&
+
+          <div className='App-frame'>
+            <div className='App-frame-rolls'>
+              <div className='App-frame-roll1'>{this.state.frames[10].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[10].rolls[2]}</div>
+            </div>
+            <div className='App-frame-total'>{this.state.frames[10].frameTotal}</div>
+          </div>
+        }
+
         </div>
+
+        <div className='App-score'>
+          <h1>Score</h1>
+          <h2>{this.state.score}</h2>
+        </div>
+
       </div>
     );
   }
