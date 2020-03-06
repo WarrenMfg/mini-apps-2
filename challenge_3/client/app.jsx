@@ -35,6 +35,62 @@ class App extends React.Component {
           },
           bonusRollCount: 0,
           frameTotal: 0
+        },
+        4: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0, // 0, 1, or 2
+          frameTotal: 0
+        },
+        5: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0,
+          frameTotal: 0
+        },
+        6: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0,
+          frameTotal: 0
+        },
+        7: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0, // 0, 1, or 2
+          frameTotal: 0
+        },
+        8: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0,
+          frameTotal: 0
+        },
+        9: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0,
+          frameTotal: 0
+        },
+        10: {
+          rolls: {
+            1: 0,
+            2: 0
+          },
+          bonusRollCount: 0,
+          frameTotal: 0
         }
       }
     };
@@ -126,9 +182,11 @@ class App extends React.Component {
     } else if (currentFrame === 1 && pinClicked === 2) {
       this.setState((prevState) => ({ currentFrame: prevState.currentFrame + 1 }));
 
-    } else if (currentFrame === 2) {
+    } else if (currentFrame === 2 && pins === 10) {
       this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
 
+    } else if (currentFrame === 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 1) ////////////////////////////////// FIX THIS LOGIC
 
     } else if (currentFrame > 2) {
       this.addToFrameWithBonusRoll(currentFrame - 2);
@@ -220,61 +278,61 @@ class App extends React.Component {
             <div className='App-frame-total'>{this.state.frames[3].frameTotal}</div>
           </div>
 
-          {/* <div className='App-frame'>
+          <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[4].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[4].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[4].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[4].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[4].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[5].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[5].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[5].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[5].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[5].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[6].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[6].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[6].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[6].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[6].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[7].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[7].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[7].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[7].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[7].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[8].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[8].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[8].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[8].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[8].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[9].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[9].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[9].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[9].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[9].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[10].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[10].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[10].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[10].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[10].frameTotal}</div>
-          </div> */}
+          </div>
         </div>
       </div>
     );
