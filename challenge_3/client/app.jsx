@@ -6,18 +6,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pins: {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-        6: 0,
-        7: 0,
-        8: 0,
-        9: 0,
-        10: 0
-      },
+      pinClicked: 0,
+      rollScoreCounted: 0,
+      pins: 0,
       currentFrame: 1,
       roll: 1,
       frames: {
@@ -34,7 +25,7 @@ class App extends React.Component {
             1: 0,
             2: 0
           },
-          bonusRollCount: 0, // 0, 1, or 2
+          bonusRollCount: 0,
           frameTotal: 0
         },
         3: {
@@ -42,7 +33,7 @@ class App extends React.Component {
             1: 0,
             2: 0
           },
-          bonusRollCount: 0, // 0, 1, or 2
+          bonusRollCount: 0,
           frameTotal: 0
         }
       }
@@ -51,98 +42,126 @@ class App extends React.Component {
     this.handlePinClick = this.handlePinClick.bind(this);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.pinClicked > prevState.pinClicked) {
+      this.handleRollScore(this.state.pins);
+    }
+
+    if (prevState.rollScoreCounted !== this.state.rollScoreCounted) {
+      this.checkForOutstandingBonusRolls();
+    }
+  }
+
   handlePinClick(e) {
     if (e.target.closest('.App-pin') === null) {
       return;
     }
 
-    const target = e.target.closest('.App-pin').id;
+    const pins = parseInt(e.target.closest('.App-pin').id, 10);
 
-    if (typeof target === 'string') { // is this if statement needed now that I have first if statement?
-      const pin = parseInt(target, 10);
-
-      if (this.state.pins[pin]) { // if 1, make 0
-        e.target.closest('.App-pin').style.cssText = 'background-color: white; color: black;';
-
-        this.setState((prevState) => {
-          prevState.pins[pin] = 0;
-          this.handleRollScore(prevState.pins);
-          return {pins: prevState.pins};
-        });
-      } else { // if 0, make 1
-        e.target.closest('.App-pin').style.cssText = 'background-color: black; color: white;';
-
-        this.setState((prevState) => {
-          prevState.pins[pin] = 1;
-          this.handleRollScore(prevState.pins);
-          return {pins: prevState.pins};
-        });
-      }
+    for (let i = pins; i >= 1; i--) {
+      document.getElementById(i).style.cssText = 'background-color: black; color: white; transition: all 0.2s ease;';
     }
+
+    setTimeout(() => {
+      for (let i = pins; i >= 1; i--) {
+        document.getElementById(i).removeAttribute('style');
+      }
+    }, 500);
+
+    this.setState((prevState) => {
+      return {
+        pins,
+        pinClicked: prevState.pinClicked + 1
+      }
+    });
   }
 
   handleRollScore(pins) {
     const { currentFrame, roll, frames } = this.state;
-    const rollScore = Object.entries(pins).reduce((acc, cur) => {return acc + cur[1]}, 0);
 
     if (roll === 1) {
       this.setState((prevState) => {
-        prevState.frames[currentFrame].rolls[roll] = rollScore;
-        prevState.frames[currentFrame].frameTotal = rollScore;
+        prevState.frames[currentFrame].rolls[roll] = pins;
+        prevState.frames[currentFrame].frameTotal = pins;
         prevState.roll = 2;
 
-        if (rollScore === 10) {
+        if (pins === 10) {
           prevState.frames[currentFrame].bonusRollCount = 2;
+          prevState.roll = 1;
         }
 
-        return { roll: prevState.roll, frames: prevState.frames };
+        return {
+          rollScoreCounted: prevState.rollScoreCounted + 1,
+          roll: prevState.roll,
+          frames: prevState.frames
+        };
       });
 
-      if (currentFrame > 1) {
-        this.checkForOutstandingBonusRolls(rollScore);
-      }
-
     } else if (roll === 2) {
-      prevState.frames[currentFrame].rolls[roll] = rollScore;
-      prevState.frames[currentFrame].frameTotal += rollScore;
-      prevState.currentFrame < 10 ? prevState.currentFrame++ : prevState.currentFrame = 10; // this will need to change
-      prevState.roll = 1;
+      this.setState((prevState) => {
+        prevState.frames[currentFrame].rolls[roll] = pins;
+        prevState.frames[currentFrame].frameTotal += pins;
+        prevState.roll = 1;
 
-      if (prevState.frames[currentFrame].frameTotal === 10) {
-        prevState.frames[currentFrame].bonusRollCount = 1;
-      }
+        if (prevState.frames[currentFrame].frameTotal === 10) {
+          prevState.frames[currentFrame].bonusRollCount = 1;
+        }
 
-      return {
-        currentFrame: prevState.currentFrame,
-        roll: prevState.roll,
-        frames: prevState.frames
-      };
-
-      if (currentFrame > 1) {
-        this.checkForOutstandingBonusRolls(rollScore);
-      }
+        return {
+          rollScoreCounted: prevState.rollScoreCounted + 1,
+          roll: prevState.roll,
+          frames: prevState.frames
+        };
+      });
     }
   }
 
-  checkForOutstandingBonusRolls(score) {
-    const { currentFrame, frames } = this.state;
+  checkForOutstandingBonusRolls() {
+    const { currentFrame, frames, roll, pins, pinClicked } = this.state;
 
-    if (currentFrame === 2) {
-      this.addToFrameWithBonusRoll(currentFrame - 1);
+    if (currentFrame === 1 && pins === 10) {
+      this.setState((prevState) => ({ currentFrame: prevState.currentFrame + 1 }));
+
+    } else if (currentFrame === 1 && pinClicked === 2) {
+      this.setState((prevState) => ({ currentFrame: prevState.currentFrame + 1 }));
+
+    } else if (currentFrame === 2) {
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
+
+
     } else if (currentFrame > 2) {
       this.addToFrameWithBonusRoll(currentFrame - 2);
-      this.addToFrameWithBonusRoll(currentFrame - 1);
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
+
+
     }
   }
 
   addToFrameWithBonusRoll(frame) {
-    if (frames[frame].bonusRollCount) {
-      this.setState((prevState) => {
-        prevState.frames[frame].frameTotal += score;
-        prevState.frames[frame].bonusRollCount--;
+    if (arguments[1] === 'incrementCurrentFrame') {
+      if (this.state.frames[frame].bonusRollCount) {
+        this.setState((prevState) => {
+          prevState.frames[frame].frameTotal += this.state.pins;
+          prevState.frames[frame].bonusRollCount--;
 
-        return { frames: prevState.frames };
-      });
+          return { frames: prevState.frames, currentFrame: prevState.currentFrame + 1 }; // currentFrame increment will have to change
+        });
+      } else {
+        this.setState((prevState) => {
+          return { currentFrame: prevState.currentFrame + 1 }; // currentFrame increment will have to change
+        });
+      }
+
+    } else {
+      if (this.state.frames[frame].bonusRollCount) {
+        this.setState((prevState) => {
+          prevState.frames[frame].frameTotal += this.state.pins;
+          prevState.frames[frame].bonusRollCount--;
+
+          return { frames: prevState.frames };
+        });
+      }
     }
   }
 
@@ -179,24 +198,24 @@ class App extends React.Component {
         <div className='App-score-card'>
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[1].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[1].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[1].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[1].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[1].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[2].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[2].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[2].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[2].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[2].frameTotal}</div>
           </div>
 
           <div className='App-frame'>
             <div className='App-frame-rolls'>
-              <div className='App-frame-roll1'>{this.state.frames[3].rolls[this.state.roll]}</div>
-              <div className='App-frame-roll2'>{this.state.frames[3].rolls[this.state.roll]}</div>
+              <div className='App-frame-roll1'>{this.state.frames[3].rolls[1]}</div>
+              <div className='App-frame-roll2'>{this.state.frames[3].rolls[2]}</div>
             </div>
             <div className='App-frame-total'>{this.state.frames[3].frameTotal}</div>
           </div>
