@@ -185,13 +185,23 @@ class App extends React.Component {
     } else if (currentFrame === 2 && pins === 10) {
       this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
 
-    } else if (currentFrame === 2) {
-      this.addToFrameWithBonusRoll(currentFrame - 1) ////////////////////////////////// FIX THIS LOGIC
+    } else if (currentFrame === 2 && roll === 2) { // first roll has occurred, count already incremented
+      this.addToFrameWithBonusRoll(currentFrame - 1);
 
-    } else if (currentFrame > 2) {
+    } else if (currentFrame === 2 && roll === 1) { // second roll occurred and was already reset to 1
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
+
+    } else if (currentFrame > 2 && pins === 10) { // regardless of first or second roll
       this.addToFrameWithBonusRoll(currentFrame - 2);
       this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
 
+    } else if (currentFrame > 2 && roll === 2) { // first roll has occurred, count already incremented
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1);
+
+    } else if (currentFrame > 2 && roll === 1) { // second roll occurred and was already reset to 1
+      this.addToFrameWithBonusRoll(currentFrame - 2);
+      this.addToFrameWithBonusRoll(currentFrame - 1, 'incrementCurrentFrame');
 
     }
   }
